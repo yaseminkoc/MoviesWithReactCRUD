@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 const AddMovie = (props) => {
     const navigate = useNavigate();
     const handleFormSubmit = (event) => {
-
         event.preventDefault();
         const newMovie = serialize(event.target, { hash: true });
         props.onAddMovie(newMovie);

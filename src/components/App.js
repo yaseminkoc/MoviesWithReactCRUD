@@ -15,7 +15,11 @@ class App extends React.Component {
 
 
     //AXIOS
-    async componentDidMount() {
+    componentDidMount() {
+       this.getMovies();
+    }
+
+    async getMovies() {
         const response = await axios.get("http://localhost:3002/movies");
         this.setState({ movies: response.data });
     }
@@ -39,6 +43,12 @@ class App extends React.Component {
         this.setState(state => ({
             movies: state.movies.concat([movie])
         }));
+        this.getMovies();
+    }
+
+    editMovie = async (movie, id) => {
+        await axios.put(`http://localhost:3002/movies/${id}`, movie);
+        this.getMovies();
     }
 
 
@@ -90,7 +100,11 @@ class App extends React.Component {
 
                         <Route path="/edit/:id" element={
                             <EditMovie
-                               
+                            onEditMovie={(movie, id) => {
+
+                                this.editMovie(movie, id);
+
+                            }}
                             
                             />}
                         />

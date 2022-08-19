@@ -1,7 +1,6 @@
 import axios from "axios";
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { Link } from "react-router-dom";
 class EditMovie extends React.Component {
     state = {
         name: "",
@@ -10,19 +9,25 @@ class EditMovie extends React.Component {
         imageURL: ""
     }
 
-
     handleFormSubmit = (event) => {
-       
-        event.preventDefault();
-        const navigate = useNavigate();
-        navigate("/");
+        const { name, rating, overview, imageURL } = this.state;
+        const updatedMovie = { name, rating, overview, imageURL };
+        const id = window.location.pathname.replace("/edit/", "");
+        this.props.onEditMovie(updatedMovie, id);
+
+    }
+
+    onInputChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value });
     }
 
     async componentDidMount() {
-        await axios.get(`http://localhost:3002/movies/${id}`);
-       
+        const id = window.location.pathname.replace("/edit/", "")
+        const response = await axios.get(`http://localhost:3002/movies/${id}`);
+        const movie = response.data;
+        this.setState({ name: movie.name, rating: movie.rating, overview: movie.overview, imageURL: movie.imageURL });
     }
-    render(){
+    render() {
         return (
 
             <div className="container">
@@ -33,14 +38,16 @@ class EditMovie extends React.Component {
                             <label htmlFor="inputName">Name</label>
                             <input type="text"
                                 className="form-control"
-                                name="name"  />
+                                name="name" value={this.state.name}
+                                onChange={this.onInputChange} />
                         </div>
                         <div className="form-group col-md-2">
                             <label htmlFor="inputRating">Rating</label>
                             <input
                                 type="text"
                                 className="form-control"
-                                name="rating" />
+                                name="rating" value={this.state.rating}
+                                onChange={this.onInputChange} />
                         </div>
                     </div>
                     <div className="form-row mt-2">
@@ -49,7 +56,8 @@ class EditMovie extends React.Component {
                             <input
                                 type="text"
                                 className="form-control"
-                                name="imageURL" />
+                                name="imageURL" value={this.state.imageURL}
+                                onChange={this.onInputChange} />
                         </div>
                     </div>
                     <div className="form-row mt-2">
@@ -57,18 +65,25 @@ class EditMovie extends React.Component {
                             <label htmlFor="overviewTextarea">Overview</label>
                             <textarea
                                 className="form-control"
-                                name="overview" rows="5"></textarea>
+                                name="overview" rows="5" value={this.state.overview}
+                                onChange={this.onInputChange}></textarea>
                         </div>
                     </div>
                     <div className="form-row mt-5">
                         <div className="form-group col-md-12">
-                            <input type="submit" className="btn btn-danger w-100" value="Edit Movie" />
+
+                            <Link type="button"
+                                to="/" onClick={this.handleFormSubmit}
+                                className="btn btn-md btn-danger w-100"
+                            >Update Movie
+                            </Link>
+
                         </div>
                     </div>
                 </form>
             </div>
         );
-    
+
     }
 }
 
